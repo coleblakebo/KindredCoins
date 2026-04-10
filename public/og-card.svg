@@ -25,12 +25,13 @@
   <rect width="1200" height="630" fill="url(#bg)" />
   <rect width="1200" height="630" fill="url(#glowA)" />
   <rect width="1200" height="630" fill="url(#glowB)" />
-  <circle cx="915" cy="315" r="118" fill="url(#coin)" stroke="#fff0b3" stroke-width="10" />
-  <path d="M840 225h150l-22 54H862z" fill="url(#gift)" />
-  <path d="M915 203l31 30h-18v35h-26v-35h-18z" fill="#7ee7ff" />
-  <path d="M883 315h64" stroke="#8a5a00" stroke-width="12" stroke-linecap="round" />
-  <path d="M899 281h32v68h-32z" fill="none" stroke="#8a5a00" stroke-width="12" stroke-linejoin="round" />
-  <text x="110" y="250" fill="#f7fbff" font-size="88" font-weight="700" font-family="Georgia, 'Times New Roman', serif">KindredCoins</text>
-  <text x="110" y="332" fill="#bcd0e6" font-size="38" font-family="Georgia, 'Times New Roman', serif">Send crypto as a gift with a polished reveal link.</text>
-  <text x="110" y="392" fill="#bcd0e6" font-size="38" font-family="Georgia, 'Times New Roman', serif">Simple claim flow. Manual fulfillment. Airtable-backed.</text>
+  <rect x="86" y="150" width="650" height="286" rx="32" fill="rgba(7,17,31,0.42)" stroke="rgba(255,255,255,0.08)" />
+  <circle cx="945" cy="325" r="102" fill="url(#coin)" stroke="#fff0b3" stroke-width="10" />
+  <path d="M880 247h130l-20 48H898z" fill="url(#gift)" />
+  <path d="M945 228l27 27h-15v31h-24v-31h-15z" fill="#7ee7ff" />
+  <path d="M918 325h54" stroke="#8a5a00" stroke-width="12" stroke-linecap="round" />
+  <path d="M931 296h28v58h-28z" fill="none" stroke="#8a5a00" stroke-width="12" stroke-linejoin="round" />
+  <text x="124" y="250" fill="#f7fbff" font-size="84" font-weight="700" font-family="Georgia, 'Times New Roman', serif">KindredCoins</text>
+  <text x="124" y="322" fill="#d5e3f2" font-size="34" font-family="Georgia, 'Times New Roman', serif">Send crypto as a gift with a polished reveal link.</text>
+  <text x="124" y="378" fill="#d5e3f2" font-size="34" font-family="Georgia, 'Times New Roman', serif">Simple claim flow. Manual fulfillment. Airtable-backed.</text>
 </svg>
