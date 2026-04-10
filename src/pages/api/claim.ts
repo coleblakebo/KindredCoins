@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { claimGift } from '../../lib/gifts'
+import { checkRateLimit, getRequestIp } from '../../lib/rate-limit'
 
 type ClaimRequest = {
   giftId: string
@@ -11,6 +12,17 @@ type ClaimRequest = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).end()
+  }
+
+  const ip = getRequestIp(req)
+  const rateLimit = checkRateLimit(`claim-gift:${ip}`, {
+    limit: 12,
+    windowMs: 15 * 60 * 1000
+  })
+
+  if (!rateLimit.allowed) {
+    res.setHeader('Retry-After', String(rateLimit.retryAfterSeconds))
+    return res.status(429).json({ error: 'Too many claim attempts. Please try again later.' })
   }
 
   const body = req.body as Partial<ClaimRequest>

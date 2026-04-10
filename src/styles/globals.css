@@ -227,6 +227,7 @@ box-shadow:inset 0 0 0 6px rgba(255,240,170,.18),0 18px 30px rgba(0,0,0,.22)}
 .balloon-coral{right:8%;width:66px;height:86px;background:linear-gradient(180deg,#ffa08e 0,#ef765d 100%);animation-delay:2.2s}
 .balloon-cream{left:42%;width:58px;height:78px;background:linear-gradient(180deg,#fff2cb 0,#f4d98d 100%);animation-delay:3.1s}
 .field{display:grid;gap:6px;font-size:14px;color:#473b33}
+.bot-field{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
 .checkbox-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;color:#473b33}
 .checkbox-row input{margin:0}
 .textarea{min-height:120px;resize:vertical}
