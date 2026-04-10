@@ -103,6 +103,7 @@ Example branch names:
 ## CI / CD
 
 - GitHub Actions runs `npm test` and `npm run build` on pushes and pull requests for `develop`, `main`, and working branches.
+- A separate `Main Merge Guard` workflow can be required on `main` so only `develop` is allowed to merge into `main`.
 - Connect the GitHub repo to Vercel for hosting.
 - Use `main` as the production branch in Vercel.
 - Use `develop` and feature branches for preview deployments.
