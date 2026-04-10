@@ -17,6 +17,10 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  statuses: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -38,10 +42,10 @@ jobs:
         run: npm test
 
       - name: notify vercel
-        if: always()
+        if: ${{ always() && (github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork) }}
         uses: vercel/repository-dispatch/actions/status@v1
         with:
-          name: Vercel - kindred-coins: test
+          name: "Vercel - kindred-coins: test"
 
   build:
     runs-on: ubuntu-latest
@@ -63,7 +67,7 @@ jobs:
         run: npm run build
 
       - name: notify vercel
-        if: always()
+        if: ${{ always() && (github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork) }}
         uses: vercel/repository-dispatch/actions/status@v1
         with:
-          name: Vercel - kindred-coins: build
+          name: "Vercel - kindred-coins: build"
