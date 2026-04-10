@@ -22,7 +22,7 @@ const holidayOptions = ['Birthday', 'Easter', "St. Patrick's Day"]
 const initialState: FormState = {
   recipientName: '',
   recipientEmail: '',
-  senderName: 'Uncle Cole',
+  senderName: '',
   senderEmail: '',
   occasion: '',
   coin: 'BTC',
