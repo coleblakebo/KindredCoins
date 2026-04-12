@@ -72,7 +72,7 @@ When scoped local vars are present, local development defaults to `dev` unless `
 Recommended Airtable fields:
 
 - `giftId`
-- `giftUrl`
+- `giftUrl` (optional legacy field)
 - `recipientName`
 - `recipientEmail`
 - `senderName`
@@ -92,7 +92,7 @@ Status lifecycle:
 - `claimed`
 - `sent`
 
-`giftId` is the canonical identifier. `giftUrl` is helpful but secondary because domains can vary in development.
+`giftId` is the canonical identifier. `giftUrl` is optional legacy metadata and should not be relied on for new gifts because domains can vary by environment.
 
 ## Theming Rules
 

@@ -84,7 +84,7 @@ http://localhost:3000/gift/izzy-d-easter-2026
 Create the same fields in both your dev and prod Airtable setups, whether that means two tables in one base or two separate Airtables:
 
 - `giftId`
-- `giftUrl`
+- `giftUrl` (optional legacy field)
 - `recipientName`
 - `recipientEmail`
 - `senderName`
@@ -121,6 +121,7 @@ Example branch names:
 ## CI / CD
 
 - GitHub Actions runs `npm test` and `npm run build` on pushes and pull requests for `develop`, `main`, and working branches.
+- GitHub Actions also runs CodeQL and a scheduled/package `npm audit` security scan.
 - A separate `Main Merge Guard` workflow can be required on `main` so only `develop` is allowed to merge into `main`.
 - Connect the GitHub repo to Vercel for hosting.
 - Use `main` as the production branch in Vercel.
@@ -150,5 +151,6 @@ The scoped `AIRTABLE_DEV_*` and `AIRTABLE_PROD_*` vars are only needed for local
 
 - Airtable is the only source of truth.
 - The app saves `giftId` as the canonical identifier and can also store the full `giftUrl` used at creation time.
+- The app treats `giftId` as the canonical identifier. `giftUrl` is optional legacy metadata and does not need to be stored for new gifts.
 - During development, the full gift URL can change if you use tunnels like ngrok or Cloudflare Tunnel.
 - The app does not send crypto automatically and does not manage private keys.

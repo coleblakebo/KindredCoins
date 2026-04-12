@@ -1,5 +1,5 @@
 import { loadLocalEnv, resolveAirtableEnv } from './env'
-import { buildGiftUrl, toGiftStatus } from './gift-utils'
+import { toGiftStatus } from './gift-utils'
 
 export type GiftStatus = 'unopened' | 'claimed' | 'sent'
 
@@ -22,7 +22,6 @@ export type Gift = {
 
 export type CreateGiftInput = {
   giftId: string
-  origin?: string
   recipientName: string
   recipientEmail: string
   senderName: string
@@ -124,17 +123,15 @@ export async function createGift(input: CreateGiftInput) {
   }
 
   const now = new Date().toISOString()
-  const giftUrl = buildGiftUrl(input.origin, input.giftId)
   const gift: Gift = {
     ...input,
-    giftUrl,
+    giftUrl: null,
     status: 'unopened',
     createdAt: now
   }
 
   const fields = {
     giftId: gift.giftId,
-    giftUrl: gift.giftUrl,
     recipientName: gift.recipientName,
     recipientEmail: gift.recipientEmail,
     senderName: gift.senderName,
@@ -162,16 +159,10 @@ export async function createGift(input: CreateGiftInput) {
   if (!response.ok) {
     const text = await response.text()
 
-    if (
-      (text.includes('senderEmail') || text.includes('giftUrl')) &&
-      text.includes('Unknown field name')
-    ) {
+    if (text.includes('senderEmail') && text.includes('Unknown field name')) {
       const fallbackFields = { ...fields }
       if (text.includes('senderEmail')) {
         delete fallbackFields.senderEmail
-      }
-      if (text.includes('giftUrl')) {
-        delete fallbackFields.giftUrl
       }
       response = await fetch(
         `https://api.airtable.com/v0/${config.baseId}/${encodeURIComponent(config.tableName || '')}`,

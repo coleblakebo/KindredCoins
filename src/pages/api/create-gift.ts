@@ -7,13 +7,34 @@ import {
   normalizeEmail,
   normalizeText
 } from '../../lib/gift-utils'
+import { checkRateLimit, getRequestIp } from '../../lib/rate-limit'
+
+type CreateGiftRequest = Partial<CreateGiftInput> & {
+  website?: string
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).end()
   }
 
-  const body = req.body as Partial<CreateGiftInput>
+  const ip = getRequestIp(req)
+  const rateLimit = checkRateLimit(`create-gift:${ip}`, {
+    limit: 6,
+    windowMs: 15 * 60 * 1000
+  })
+
+  if (!rateLimit.allowed) {
+    res.setHeader('Retry-After', String(rateLimit.retryAfterSeconds))
+    return res.status(429).json({ error: 'Too many gift creation attempts. Please try again later.' })
+  }
+
+  const body = req.body as CreateGiftRequest
+  const website = normalizeText(body.website)
+  if (website) {
+    return res.status(400).json({ error: 'Failed to create gift.' })
+  }
+
   const payload: CreateGiftInput = {
     giftId: normalizeText(body.giftId),
     recipientName: normalizeText(body.recipientName),
@@ -23,8 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     occasion: normalizeText(body.occasion),
     coin: normalizeText(body.coin).toUpperCase(),
     amountDisplay: normalizeAmountDisplay(body.amountDisplay),
-    messageFromYou: normalizeText(body.messageFromYou),
-    origin: normalizeText(body.origin)
+    messageFromYou: normalizeText(body.messageFromYou)
   }
 
   if (

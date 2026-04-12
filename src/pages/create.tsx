@@ -16,6 +16,7 @@ type FormState = {
   amountDisplay: string
   messageFromYou: string
   giftId: string
+  website: string
 }
 
 const holidayOptions = ['Birthday', 'Easter', "St. Patrick's Day"]
@@ -29,7 +30,8 @@ const initialState: FormState = {
   coin: 'BTC',
   amountDisplay: '',
   messageFromYou: '',
-  giftId: ''
+  giftId: '',
+  website: ''
 }
 
 export default function CreateGiftPage() {
@@ -96,10 +98,7 @@ export default function CreateGiftPage() {
       const response = await fetch('/api/create-gift', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          origin: typeof window === 'undefined' ? '' : window.location.origin
-        })
+        body: JSON.stringify(form)
       })
       const payload = (await response.json()) as { error?: string; gift?: { giftId: string } }
 
@@ -267,6 +266,19 @@ export default function CreateGiftPage() {
                   placeholder="Optional note for the gift reveal"
                 />
               </label>
+
+              <div className="bot-field" aria-hidden="true">
+                <label>
+                  <span>Website</span>
+                  <input
+                    className="input"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={form.website}
+                    onChange={(event) => updateField('website', event.target.value)}
+                  />
+                </label>
+              </div>
 
               {error ? <div className="error">{error}</div> : null}
 
