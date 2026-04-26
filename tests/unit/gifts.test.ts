@@ -6,7 +6,6 @@ describe('gift row mapping', () => {
   it('maps postgres rows to serialized gifts', () => {
     const gift = mapGiftRowToGift({
       gift_id: 'izzy-birthday-2026',
-      gift_url: 'https://kindredcoins.com/gift/izzy-birthday-2026',
       recipient_name: 'Izzy',
       recipient_email: 'izzy@example.com',
       sender_name: 'Cole',
@@ -23,7 +22,6 @@ describe('gift row mapping', () => {
 
     expect(gift).toEqual({
       giftId: 'izzy-birthday-2026',
-      giftUrl: 'https://kindredcoins.com/gift/izzy-birthday-2026',
       recipientName: 'Izzy',
       recipientEmail: 'izzy@example.com',
       senderName: 'Cole',
@@ -42,7 +40,6 @@ describe('gift row mapping', () => {
   it('falls back to unopened for unknown statuses', () => {
     const gift = mapGiftRowToGift({
       gift_id: 'unknown-status',
-      gift_url: null,
       recipient_name: 'Izzy',
       recipient_email: 'izzy@example.com',
       sender_name: 'Cole',

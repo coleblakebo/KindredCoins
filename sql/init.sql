@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS gifts (
   gift_id TEXT PRIMARY KEY,
-  gift_url TEXT,
   recipient_name TEXT NOT NULL,
   recipient_email TEXT NOT NULL,
   sender_name TEXT NOT NULL,

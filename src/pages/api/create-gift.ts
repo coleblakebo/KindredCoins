@@ -23,8 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     occasion: normalizeText(body.occasion),
     coin: normalizeText(body.coin).toUpperCase(),
     amountDisplay: normalizeAmountDisplay(body.amountDisplay),
-    messageFromYou: normalizeText(body.messageFromYou),
-    origin: normalizeText(body.origin)
+    messageFromYou: normalizeText(body.messageFromYou)
   }
 
   if (

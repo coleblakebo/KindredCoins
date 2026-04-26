@@ -77,7 +77,6 @@ http://localhost:3000/gift/izzy-d-easter-2026
 The app uses a single `gifts` table. The included [sql/init.sql](/Users/coleblakeborough/Projects/KindredCoins/sql/init.sql:1) script creates these columns:
 
 - `gift_id`
-- `gift_url`
 - `recipient_name`
 - `recipient_email`
 - `sender_name`
@@ -137,6 +136,6 @@ Recommended Vercel env vars:
 ## Notes
 
 - Postgres is the only source of truth.
-- The app saves `giftId` as the canonical identifier and can also store the full `giftUrl` used at creation time.
+- The app saves `giftId` as the canonical identifier. Full gift URLs should be derived at runtime from the current origin.
 - During development, the full gift URL can change if you use tunnels like ngrok or Cloudflare Tunnel.
 - The app does not send crypto automatically and does not manage private keys.

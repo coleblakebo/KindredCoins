@@ -65,7 +65,6 @@ async function main() {
     await pool.query(
       `INSERT INTO gifts (
         gift_id,
-        gift_url,
         recipient_name,
         recipient_email,
         sender_name,
@@ -79,10 +78,9 @@ async function main() {
         claimed_at,
         created_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, COALESCE($14::timestamptz, NOW())
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, COALESCE($13::timestamptz, NOW())
       )
       ON CONFLICT (gift_id) DO UPDATE SET
-        gift_url = EXCLUDED.gift_url,
         recipient_name = EXCLUDED.recipient_name,
         recipient_email = EXCLUDED.recipient_email,
         sender_name = EXCLUDED.sender_name,
@@ -97,7 +95,6 @@ async function main() {
         created_at = EXCLUDED.created_at`,
       [
         giftId,
-        fields.giftUrl ? String(fields.giftUrl) : null,
         String(fields.recipientName || ''),
         String(fields.recipientEmail || ''),
         String(fields.senderName || 'Uncle Cole'),

@@ -65,7 +65,7 @@ Status lifecycle:
 - `claimed`
 - `sent`
 
-`giftId` is the canonical identifier. `giftUrl` is helpful but secondary because domains can vary in development.
+`giftId` is the canonical identifier. Full gift URLs should be derived at runtime because domains can vary in development.
 
 ## Theming Rules
 

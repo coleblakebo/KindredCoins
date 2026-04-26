@@ -1,9 +1,8 @@
 import { query, withTransaction } from './db'
-import { buildGiftUrl, toGiftStatus } from './gift-utils'
+import { toGiftStatus } from './gift-utils'
 
 type GiftRow = {
   gift_id: string
-  gift_url: string | null
   recipient_name: string
   recipient_email: string
   sender_name: string
@@ -22,7 +21,6 @@ export type GiftStatus = 'unopened' | 'claimed' | 'sent'
 
 export type Gift = {
   giftId: string
-  giftUrl?: string | null
   recipientName: string
   recipientEmail: string
   senderName: string
@@ -39,7 +37,6 @@ export type Gift = {
 
 export type CreateGiftInput = {
   giftId: string
-  origin?: string
   recipientName: string
   recipientEmail: string
   senderName: string
@@ -68,7 +65,6 @@ export function mapGiftRowToGift(row: GiftRow): Gift {
 
   return {
     giftId: row.gift_id,
-    giftUrl: row.gift_url,
     recipientName: row.recipient_name,
     recipientEmail: row.recipient_email,
     senderName: row.sender_name || 'Uncle Cole',
@@ -86,7 +82,6 @@ export function mapGiftRowToGift(row: GiftRow): Gift {
 
 const giftColumns = `
   gift_id,
-  gift_url,
   recipient_name,
   recipient_email,
   sender_name,
@@ -113,13 +108,10 @@ export async function getGiftById(giftId: string) {
 }
 
 export async function createGift(input: CreateGiftInput) {
-  const giftUrl = buildGiftUrl(input.origin, input.giftId)
-
   try {
     const result = await query<GiftRow>(
       `INSERT INTO gifts (
         gift_id,
-        gift_url,
         recipient_name,
         recipient_email,
         sender_name,
@@ -130,12 +122,11 @@ export async function createGift(input: CreateGiftInput) {
         message_from_you,
         status
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'unopened'
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, 'unopened'
       )
       RETURNING ${giftColumns}`,
       [
         input.giftId,
-        giftUrl,
         input.recipientName,
         input.recipientEmail,
         input.senderName,
