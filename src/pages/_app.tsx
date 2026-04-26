@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:title" content="KindredCoins | Send Crypto as a Gift" />
         <meta
           property="og:description"
-          content="Create themed crypto gifts, share the reveal link, and handle fulfillment manually with Airtable as the source of truth."
+          content="Create themed crypto gifts, share the reveal link, and handle fulfillment manually with Postgres as the source of truth."
         />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:image:width" content="1200" />

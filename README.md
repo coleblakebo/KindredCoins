@@ -1,6 +1,6 @@
 # KindredCoins
 
-A small Next.js app for creating and sharing crypto gift links. KindredCoins lets you create a gift, send the recipient their URL, and track the same Airtable record from `unopened` to `claimed` for manual fulfillment.
+A small Next.js app for creating and sharing crypto gift links. KindredCoins lets you create a gift, send the recipient their URL, and track the same Postgres record from `unopened` to `claimed` for manual fulfillment.
 
 ## Quick Start
 
@@ -12,9 +12,24 @@ A small Next.js app for creating and sharing crypto gift links. KindredCoins let
 npm install
 ```
 
-3. Create a `.env.local` file in the project root.
+3. Create a `.env.local` file in the project root:
 
-For the simplest setup, local development can still use one Airtable config:
+```env
+POSTGRES_URL=your_pooled_connection_string
+POSTGRES_URL_NON_POOLING=your_direct_connection_string
+RESEND_API_KEY=your_resend_api_key
+EMAIL_FROM=KindredCoins <gifts@kindredcoins.com>
+EMAIL_REPLY_TO=hello@kindredcoins.com
+NEXT_PUBLIC_SITE_URL=https://kindredcoins.com
+```
+
+4. Initialize the database schema:
+
+```bash
+npm run db:init
+```
+
+If you already have data in Airtable and want to migrate it into Postgres first, add your old Airtable env vars to `.env.local` temporarily and run:
 
 ```env
 AIRTABLE_API_KEY=your_airtable_token
@@ -22,46 +37,25 @@ AIRTABLE_BASE_ID=your_base_id
 AIRTABLE_TABLE=gifts-dev
 ```
 
-If you want one local file that can switch between separate dev and prod Airtable configs, use:
-
-```env
-AIRTABLE_LOCAL_ENV=dev
-
-AIRTABLE_DEV_API_KEY=your_dev_airtable_token
-AIRTABLE_DEV_BASE_ID=your_dev_base_id
-AIRTABLE_DEV_TABLE=gifts-dev
-
-AIRTABLE_PROD_API_KEY=your_prod_airtable_token
-AIRTABLE_PROD_BASE_ID=your_prod_base_id
-AIRTABLE_PROD_TABLE=gifts-prod
-```
-
-When scoped vars are present, local development defaults to `dev`. Set `AIRTABLE_LOCAL_ENV=prod` if you want to point your local app at the prod Airtable config.
-
-Optional email automation uses Resend from the server after a gift is created or claimed:
-
-```env
-RESEND_API_KEY=your_resend_api_key
-EMAIL_FROM=KindredCoins <gifts@kindredcoins.com>
-EMAIL_REPLY_TO=hello@kindredcoins.com
-NEXT_PUBLIC_SITE_URL=https://kindredcoins.com
+```bash
+npm run db:import:airtable
 ```
 
 If `RESEND_API_KEY` or `EMAIL_FROM` is missing, gift creation and claiming still work. The sender can copy the share link manually and claim confirmation just skips the email step.
 
-4. Run the dev server:
+5. Run the dev server:
 
 ```bash
 npm run dev
 ```
 
-5. Run the unit tests:
+6. Run the unit tests:
 
 ```bash
 npm test
 ```
 
-6. Open the main flows:
+7. Open the main flows:
 
 ```text
 http://localhost:3000/create
@@ -72,7 +66,7 @@ http://localhost:3000/gift/izzy-d-easter-2026
 
 - Creates gift records at `/create`.
 - Shows a themed gift reveal page at `/gift/[id]`.
-- Stores gifts in Airtable using env-driven config.
+- Stores gifts in Postgres using environment-driven database config.
 - Lets recipients either submit a wallet address or mark that the sender already has it.
 - Can email the recipient their gift link on create and email the sender when the gift is claimed.
 - Supports default, birthday, Easter, and St. Patrick's Day gift experiences.
@@ -83,7 +77,7 @@ http://localhost:3000/gift/izzy-d-easter-2026
   Next.js pages, routes, and API handlers.
 
 - `src/lib`
-  Airtable logic and shared helpers.
+  Postgres logic and shared helpers.
 
 - `src/styles`
   Global app styling and holiday theme CSS.
@@ -91,24 +85,23 @@ http://localhost:3000/gift/izzy-d-easter-2026
 - `tests/unit`
   Unit tests for reusable logic.
 
-## Airtable Fields
+## Postgres Schema
 
-Create the same fields in both your dev and prod Airtable setups, whether that means two tables in one base or two separate Airtables:
+The app uses a single `gifts` table. The included [sql/init.sql](/Users/coleblakeborough/Projects/KindredCoins/sql/init.sql:1) script creates these columns:
 
-- `giftId`
-- `giftUrl` (optional legacy field)
-- `recipientName`
-- `recipientEmail`
-- `senderName`
-- `senderEmail`
+- `gift_id`
+- `recipient_name`
+- `recipient_email`
+- `sender_name`
+- `sender_email`
 - `occasion`
 - `coin`
-- `amountDisplay`
-- `messageFromYou`
+- `amount_display`
+- `message_from_you`
 - `status`
-- `walletAddress`
-- `claimedAt`
-- `createdAt`
+- `wallet_address`
+- `claimed_at`
+- `created_at`
 
 ## Status Lifecycle
 
@@ -127,7 +120,7 @@ Create the same fields in both your dev and prod Airtable setups, whether that m
 Example branch names:
 
 - `feature/easter-theme`
-- `feature/airtable-automation`
+- `feature/postgres-migration`
 - `fix/mobile-bunny`
 
 ## CI / CD
@@ -138,21 +131,16 @@ Example branch names:
 - Connect the GitHub repo to Vercel for hosting.
 - Use `main` as the production branch in Vercel.
 - Use `develop` and feature branches for preview deployments.
-- Add your Airtable env vars in Vercel for Production and Preview environments.
+- Add your Postgres env vars in Vercel for Production and Preview environments.
 
 Recommended Vercel env vars:
 
-- `AIRTABLE_API_KEY`
-- `AIRTABLE_BASE_ID`
-- `AIRTABLE_TABLE`
+- `POSTGRES_URL`
+- `POSTGRES_URL_NON_POOLING`
 - `NEXT_PUBLIC_SITE_URL`
 - `RESEND_API_KEY`
 - `EMAIL_FROM`
 - `EMAIL_REPLY_TO`
-
-Vercel should keep using plain `AIRTABLE_*` variables per environment.
-Set Preview to your dev Airtable values and Production to your prod Airtable values in the Vercel project settings.
-The scoped `AIRTABLE_DEV_*` and `AIRTABLE_PROD_*` vars are only needed for local development.
 
 ## Milestones And Releases
 
@@ -165,8 +153,7 @@ The scoped `AIRTABLE_DEV_*` and `AIRTABLE_PROD_*` vars are only needed for local
 
 ## Notes
 
-- Airtable is the only source of truth.
-- The app saves `giftId` as the canonical identifier and can also store the full `giftUrl` used at creation time.
-- The app treats `giftId` as the canonical identifier. `giftUrl` is optional legacy metadata and does not need to be stored for new gifts.
+- Postgres is the only source of truth.
+- The app saves `giftId` as the canonical identifier. Full gift URLs should be derived at runtime from the current origin.
 - During development, the full gift URL can change if you use tunnels like ngrok or Cloudflare Tunnel.
 - The app does not send crypto automatically and does not manage private keys.
