@@ -29,18 +29,6 @@ NEXT_PUBLIC_SITE_URL=https://kindredcoins.com
 npm run db:init
 ```
 
-If you already have data in Airtable and want to migrate it into Postgres first, add your old Airtable env vars to `.env.local` temporarily and run:
-
-```env
-AIRTABLE_API_KEY=your_airtable_token
-AIRTABLE_BASE_ID=your_base_id
-AIRTABLE_TABLE=gifts-dev
-```
-
-```bash
-npm run db:import:airtable
-```
-
 If `RESEND_API_KEY` or `EMAIL_FROM` is missing, gift creation and claiming still work. The sender can copy the share link manually and claim confirmation just skips the email step.
 
 5. Run the dev server:
