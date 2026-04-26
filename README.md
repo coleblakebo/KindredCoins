@@ -17,6 +17,10 @@ npm install
 ```env
 POSTGRES_URL=your_pooled_connection_string
 POSTGRES_URL_NON_POOLING=your_direct_connection_string
+RESEND_API_KEY=your_resend_api_key
+EMAIL_FROM=KindredCoins <gifts@kindredcoins.com>
+EMAIL_REPLY_TO=hello@kindredcoins.com
+NEXT_PUBLIC_SITE_URL=https://kindredcoins.com
 ```
 
 4. Initialize the database schema:
@@ -27,9 +31,17 @@ npm run db:init
 
 If you already have data in Airtable and want to migrate it into Postgres first, add your old Airtable env vars to `.env.local` temporarily and run:
 
+```env
+AIRTABLE_API_KEY=your_airtable_token
+AIRTABLE_BASE_ID=your_base_id
+AIRTABLE_TABLE=gifts-dev
+```
+
 ```bash
 npm run db:import:airtable
 ```
+
+If `RESEND_API_KEY` or `EMAIL_FROM` is missing, gift creation and claiming still work. The sender can copy the share link manually and claim confirmation just skips the email step.
 
 5. Run the dev server:
 
@@ -43,7 +55,7 @@ npm run dev
 npm test
 ```
 
-6. Open the main flows:
+7. Open the main flows:
 
 ```text
 http://localhost:3000/create
@@ -54,8 +66,9 @@ http://localhost:3000/gift/izzy-d-easter-2026
 
 - Creates gift records at `/create`.
 - Shows a themed gift reveal page at `/gift/[id]`.
-- Stores gifts in a single Postgres table.
+- Stores gifts in Postgres using environment-driven database config.
 - Lets recipients either submit a wallet address or mark that the sender already has it.
+- Can email the recipient their gift link on create and email the sender when the gift is claimed.
 - Supports default, birthday, Easter, and St. Patrick's Day gift experiences.
 
 ## Repo Layout
@@ -113,6 +126,7 @@ Example branch names:
 ## CI / CD
 
 - GitHub Actions runs `npm test` and `npm run build` on pushes and pull requests for `develop`, `main`, and working branches.
+- GitHub Actions also runs CodeQL and a scheduled/package `npm audit` security scan.
 - A separate `Main Merge Guard` workflow can be required on `main` so only `develop` is allowed to merge into `main`.
 - Connect the GitHub repo to Vercel for hosting.
 - Use `main` as the production branch in Vercel.
@@ -123,6 +137,10 @@ Recommended Vercel env vars:
 
 - `POSTGRES_URL`
 - `POSTGRES_URL_NON_POOLING`
+- `NEXT_PUBLIC_SITE_URL`
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
+- `EMAIL_REPLY_TO`
 
 ## Milestones And Releases
 
