@@ -1,6 +1,6 @@
 # KindredCoins
 
-A small Next.js app for creating and sharing crypto gift links. KindredCoins lets you create a gift, send the recipient their URL, and track the same Airtable record from `unopened` to `claimed` for manual fulfillment.
+A small Next.js app for creating and sharing crypto gift links. KindredCoins lets you create a gift, send the recipient their URL, and track the same Postgres record from `unopened` to `claimed` for manual fulfillment.
 
 ## Quick Start
 
@@ -15,18 +15,29 @@ npm install
 3. Create a `.env.local` file in the project root:
 
 ```env
-AIRTABLE_API_KEY=your_airtable_token
-AIRTABLE_BASE_ID=your_base_id
-AIRTABLE_TABLE=gifts-dev
+POSTGRES_URL=your_pooled_connection_string
+POSTGRES_URL_NON_POOLING=your_direct_connection_string
 ```
 
-4. Run the dev server:
+4. Initialize the database schema:
+
+```bash
+npm run db:init
+```
+
+If you already have data in Airtable and want to migrate it into Postgres first, add your old Airtable env vars to `.env.local` temporarily and run:
+
+```bash
+npm run db:import:airtable
+```
+
+5. Run the dev server:
 
 ```bash
 npm run dev
 ```
 
-5. Run the unit tests:
+6. Run the unit tests:
 
 ```bash
 npm test
@@ -43,7 +54,7 @@ http://localhost:3000/gift/izzy-d-easter-2026
 
 - Creates gift records at `/create`.
 - Shows a themed gift reveal page at `/gift/[id]`.
-- Stores gifts in a single Airtable table.
+- Stores gifts in a single Postgres table.
 - Lets recipients either submit a wallet address or mark that the sender already has it.
 - Supports default, birthday, Easter, and St. Patrick's Day gift experiences.
 
@@ -53,7 +64,7 @@ http://localhost:3000/gift/izzy-d-easter-2026
   Next.js pages, routes, and API handlers.
 
 - `src/lib`
-  Airtable logic and shared helpers.
+  Postgres logic and shared helpers.
 
 - `src/styles`
   Global app styling and holiday theme CSS.
@@ -61,24 +72,24 @@ http://localhost:3000/gift/izzy-d-easter-2026
 - `tests/unit`
   Unit tests for reusable logic.
 
-## Airtable Fields
+## Postgres Schema
 
-Create two tables in your Airtable base (`gifts-dev` for local dev and `gifts-prod` for production in Vercel) with these recommended fields:
+The app uses a single `gifts` table. The included [sql/init.sql](/Users/coleblakeborough/Projects/KindredCoins/sql/init.sql:1) script creates these columns:
 
-- `giftId`
-- `giftUrl`
-- `recipientName`
-- `recipientEmail`
-- `senderName`
-- `senderEmail`
+- `gift_id`
+- `gift_url`
+- `recipient_name`
+- `recipient_email`
+- `sender_name`
+- `sender_email`
 - `occasion`
 - `coin`
-- `amountDisplay`
-- `messageFromYou`
+- `amount_display`
+- `message_from_you`
 - `status`
-- `walletAddress`
-- `claimedAt`
-- `createdAt`
+- `wallet_address`
+- `claimed_at`
+- `created_at`
 
 ## Status Lifecycle
 
@@ -97,7 +108,7 @@ Create two tables in your Airtable base (`gifts-dev` for local dev and `gifts-pr
 Example branch names:
 
 - `feature/easter-theme`
-- `feature/airtable-automation`
+- `feature/postgres-migration`
 - `fix/mobile-bunny`
 
 ## CI / CD
@@ -107,13 +118,12 @@ Example branch names:
 - Connect the GitHub repo to Vercel for hosting.
 - Use `main` as the production branch in Vercel.
 - Use `develop` and feature branches for preview deployments.
-- Add your Airtable env vars in Vercel for Production and Preview environments.
+- Add your Postgres env vars in Vercel for Production and Preview environments.
 
 Recommended Vercel env vars:
 
-- `AIRTABLE_API_KEY`
-- `AIRTABLE_BASE_ID`
-- `AIRTABLE_TABLE`
+- `POSTGRES_URL`
+- `POSTGRES_URL_NON_POOLING`
 
 ## Milestones And Releases
 
@@ -126,7 +136,7 @@ Recommended Vercel env vars:
 
 ## Notes
 
-- Airtable is the only source of truth.
+- Postgres is the only source of truth.
 - The app saves `giftId` as the canonical identifier and can also store the full `giftUrl` used at creation time.
 - During development, the full gift URL can change if you use tunnels like ngrok or Cloudflare Tunnel.
 - The app does not send crypto automatically and does not manage private keys.
